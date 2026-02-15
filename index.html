@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Valentine 💖</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:#ffd6e8;
+    font-family:Arial, sans-serif;
+}
+
+/* CONTENEDOR */
+.container{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    z-index:10;
+}
+
+/* BOTONES */
+button{
+    padding:15px 30px;
+    font-size:18px;
+    border:none;
+    border-radius:30px;
+    margin:10px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.yes{
+    background:#ff4d6d;
+    color:white;
+}
+
+.yes:hover{
+    transform:scale(1.1);
+}
+
+.no{
+    background:white;
+    color:#ff4d6d;
+}
+
+/* TEXTO */
+.center-text{
+    position:absolute;
+    top:10%;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:45px;
+    color:#ff4d6d;
+    font-weight:bold;
+    text-align:center;
+    z-index:5;
+}
+
+/* CORAZONES */
+.heart{
+    position:absolute;
+    font-size:20px;
+    color:#ff4d6d;
+    animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+    from{ transform:translateY(100vh); opacity:1; }
+    to{ transform:translateY(-10vh); opacity:0; }
+}
+
+/* CANVAS */
+canvas{
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="main">
+    <h1 style="color:#ff4d6d;">Will you be my Valentine?</h1>
+    <button class="yes" onclick="yesClick()">YES 💖</button>
+    <button class="no" 
+        onmouseover="moveNo(this)" 
+        ontouchstart="moveNo(this)">NO </button>
+</div>
+
+<canvas id="flowerCanvas" width="600" height="600"></canvas>
+
+<script>
+
+/* CORAZONES FLOTANDO */
+function createHearts(){
+    for(let i=0;i<25;i++){
+        const heart=document.createElement("div");
+        heart.className="heart";
+        heart.innerHTML="❤";
+        heart.style.left=Math.random()*100+"vw";
+        heart.style.fontSize=(15+Math.random()*25)+"px";
+        heart.style.animationDuration=(4+Math.random()*5)+"s";
+        heart.style.animationDelay=Math.random()*5+"s";
+        document.body.appendChild(heart);
+    }
+}
+createHearts();
+
+/* BOTON NO ESCAPA */
+function moveNo(btn){
+    btn.style.position="absolute";
+    btn.style.top=Math.random()*80+"%";
+    btn.style.left=Math.random()*80+"%";
+}
+
+/* CLICK YES */
+function yesClick(){
+    document.getElementById("main").style.display="none";
+
+    const text=document.createElement("div");
+    text.className="center-text";
+    text.innerText="For you ❤️";
+    document.body.appendChild(text);
+
+    drawSunflower();
+}
+
+/* 🌻 GIRASOL ANIMADO PASO A PASO */
+function drawSunflower(){
+
+    const canvas = document.getElementById("flowerCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const centerX = canvas.width/2;
+    const centerY = canvas.height/2;
+
+    let petalIndex = 0;
+    let seedIndex = 0;
+    const phi = 137.508 * Math.PI/180;
+
+    function drawPetals(){
+
+        if(petalIndex >= 16){
+            setTimeout(drawCenter, 500);
+            return;
+        }
+
+        ctx.save();
+        ctx.translate(centerX,centerY);
+        ctx.rotate(petalIndex * Math.PI/8);
+        ctx.fillStyle="red";
+
+        for(let j=0;j<18;j++){
+            ctx.beginPath();
+            ctx.ellipse(0, -100+j*3, 30, 80, 0, 0, Math.PI*2);
+            ctx.fill();
+        }
+
+        ctx.restore();
+
+        petalIndex++;
+        setTimeout(drawPetals, 150);
+    }
+
+    function drawCenter(){
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 60, 0, Math.PI*2);
+        ctx.fillStyle="brown";
+        ctx.fill();
+
+        setTimeout(drawSeeds, 300);
+    }
+
+    function drawSeeds(){
+
+        if(seedIndex >= 200){
+            return;
+        }
+
+        const r = 4 * Math.sqrt(seedIndex);
+        const theta = seedIndex * phi;
+
+        const x = centerX + r * Math.cos(theta);
+        const y = centerY + r * Math.sin(theta);
+
+        ctx.beginPath();
+        ctx.arc(x,y,3,0,Math.PI*2);
+        ctx.fillStyle="black";
+        ctx.fill();
+
+        seedIndex++;
+        requestAnimationFrame(drawSeeds);
+    }
+
+    drawPetals();
+}
+
+</script>
+
+</body>
+</html>
